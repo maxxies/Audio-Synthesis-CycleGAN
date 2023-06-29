@@ -1,7 +1,7 @@
 #############################
 # Training Parameters
 #############################
-num_of_epochs = 1000
+num_of_epochs = 2
 audio_sampling_rate = 16000
 
 #############################
@@ -14,16 +14,16 @@ train_B_dir = 'gs://audio_dataset_bucket/Audios/happy'
 # Model Parameters
 #############################
 model_prefix = 'happy'
-model_dir =f'./{model_prefix}'
+model_dir =f"/home/jupyter/model/{model_prefix}"
 
 #############################
 # Training logs Parameters
 #############################
-train_logs__dir ='./Train_Logs'
+train_logs__dir ='/home/jupyter/Train_Logs'
 
 #############################
 # Output Parameters
 #############################
-norm_dir = './Normalizations'
-output_dir = './output'
-log_dir = './Tensorboard_Logs'
+norm_dir = '/home/jupyter/Normalizations'
+output_dir = '/home/jupyter/output'
+log_dir = '/home/jupyter/Tensorboard_Logs'

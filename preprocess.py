@@ -51,22 +51,14 @@ def world_decode_spectral_envelop(coded_sp, fs):
 def world_encode_data(wavs, fs, frame_period = 5.0, coded_dim = 24):
     f0s = list()
     coded_sps = list()
-    widgets = ['World Encode Data: ',
-        progressbar.Percentage(), ' ',
-        progressbar.ETA(),
-    ]
- 
-    bar = progressbar.ProgressBar(max_value=len(wavs),widgets=widgets).start()
+
     for i,wav in enumerate(wavs):
         f0, _, sp, _ = world_decompose(wav = wav, fs = fs, frame_period = frame_period)
         coded_sp = world_encode_spectral_envelop(sp = sp, fs = fs, dim = coded_dim)
         f0s.append(f0)
         coded_sps.append(coded_sp)
 
-        bar.update(i)
-        
-    bar.finish()
-
+    
     return f0s, coded_sps
 
 
@@ -92,13 +84,6 @@ def world_decode_data(coded_sps, fs):
 def world_speech_synthesis(f0, decoded_sp, ap, fs, frame_period):
 
     #decoded_sp = decoded_sp.astype(np.float64)
-    print()
-    print('Shape of passed F0 converted: {}'.format(f0.shape))
-    print('Shape of passed Decoded SP: {}'.format(decoded_sp.shape))
-    print('Shape of passed Ap: {}'.format(ap.shape))
-
-
-    
     wav = pyworld.synthesize(f0, decoded_sp, ap, fs, frame_period)
     # Librosa could not save wav if not doing so
     wav = wav.astype(np.float32)
@@ -257,26 +242,26 @@ def sample_train_data(dataset_A, dataset_B, n_frames = 128):
     return train_data_A, train_data_B
 
 
-def visualize_loss(loss_1, loss_2, first_legend, second_legend, y_label):
-    plt.figure(figsize=(10, 5))
-    plt.title("{} and {} Loss During Training".format(first_legend, second_legend))
-    plt.plot(loss_1, label=first_legend)
-    plt.plot(loss_2, label=second_legend)
-    plt.xlabel("Iterations")
-    plt.ylabel(y_label)
-    plt.grid(True)
-    plt.tight_layout()
-    plt.legend()
+# def visualize_loss(loss_1, loss_2, first_legend, second_legend, y_label):
+#     plt.figure(figsize=(10, 5))
+#     plt.title("{} and {} Loss During Training".format(first_legend, second_legend))
+#     plt.plot(loss_1, label=first_legend)
+#     plt.plot(loss_2, label=second_legend)
+#     plt.xlabel("Iterations")
+#     plt.ylabel(y_label)
+#     plt.grid(True)
+#     plt.tight_layout()
+#     plt.legend()
 
-    if not (os.path.isdir("visualization")):
-        os.makedirs("visualization")
+#     if not (os.path.isdir("visualization")):
+#         os.makedirs("visualization")
 
-    plt.savefig("visualization/loss.png")
+#     plt.savefig("visualization/loss.png")
 
-    plt.show()
+#     plt.show()
 
-def visualize_audio(audio,sampling_rate,text=''):
-    print(text)
-    IPython.display.display(ipd.Audio(audio, rate=sampling_rate, autoplay=False))            # plays audio
-    plt.plot(audio, '-', )                                        # plot audio
-    plt.show()
+# def visualize_audio(audio,sampling_rate,text=''):
+#     print(text)
+#     IPython.display.display(ipd.Audio(audio, rate=sampling_rate, autoplay=False))            # plays audio
+#     plt.plot(audio, '-', )                                        # plot audio
+#     plt.show()

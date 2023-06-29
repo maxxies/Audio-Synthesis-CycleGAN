@@ -1,6 +1,5 @@
 librosa
 pyworld
-progressbar2
 argparse
 ffmpeg
 ipython

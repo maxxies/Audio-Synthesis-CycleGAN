@@ -61,8 +61,8 @@ def conversion(file, conversion_direction='A2B'):
 
     wav_transformed = world_speech_synthesis(f0 = f0_converted, decoded_sp = decoded_sp_converted, ap = ap, fs = sampling_rate, frame_period = frame_period)
 
-    visualize_audio(wav,sampling_rate,'Monotone audio')
-    visualize_audio(wav_transformed,sampling_rate,'Synthesised audio')
+    # visualize_audio(wav,sampling_rate,'Monotone audio')
+    # visualize_audio(wav_transformed,sampling_rate,'Synthesised audio')
     sf.write(os.path.join(output_dir, os.path.basename(file)), wav_transformed, sampling_rate)
 
 
