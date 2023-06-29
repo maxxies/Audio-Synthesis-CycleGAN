@@ -6,7 +6,6 @@ import pyworld
 import matplotlib.pyplot as plt
 import IPython
 import IPython.display as ipd 
-import progressbar
 
 def load_wavs(wav_dir, sr):
 
