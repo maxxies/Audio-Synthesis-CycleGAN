@@ -1,7 +1,7 @@
 #############################
 # Training Parameters
 #############################
-num_of_epochs = 2
+num_of_epochs = 100
 audio_sampling_rate = 16000
 
 #############################
