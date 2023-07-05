@@ -7,13 +7,13 @@ audio_sampling_rate = 16000
 #############################
 # Datsets Parameters
 #############################
-train_A_dir = 'gs://audio_dataset_bucket/Audios/neutral'
-train_B_dir = 'gs://audio_dataset_bucket/Audios/happy'
+# train_A_dir = 'gs://audio_dataset_bucket/Audios/neutral'
+# train_B_dir = 'gs://audio_dataset_bucket/Audios/happy'
 
 #############################
 # Model Parameters
 #############################
-model_prefix = 'happy'
+model_prefix = 'sad'
 model_dir =f"/home/jupyter/model/{model_prefix}"
 
 #############################
