@@ -13,7 +13,7 @@ audio_sampling_rate = 16000
 #############################
 # Model Parameters
 #############################
-model_prefix = 'sad'
+model_prefix = 'anger'
 model_dir =f"/home/jupyter/model/{model_prefix}"
 
 #############################
