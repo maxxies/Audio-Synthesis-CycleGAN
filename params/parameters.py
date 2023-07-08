@@ -13,7 +13,7 @@ audio_sampling_rate = 16000
 #############################
 # Model Parameters
 #############################
-model_prefix = 'fear'
+model_prefix = 'calm'
 model_dir =f"/home/jupyter/model/{model_prefix}"
 
 #############################
