@@ -1,7 +1,7 @@
 #############################
 # Training Parameters
 #############################
-num_of_epochs = 100
+num_of_epochs = 500
 audio_sampling_rate = 16000
 
 #############################
@@ -13,7 +13,7 @@ audio_sampling_rate = 16000
 #############################
 # Model Parameters
 #############################
-model_prefix = 'disgust'
+model_prefix = 'happy'
 model_dir =f"/home/jupyter/model/{model_prefix}"
 
 #############################
