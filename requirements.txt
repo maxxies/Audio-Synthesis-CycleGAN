@@ -1,5 +1,4 @@
 librosa
-pyworld --no-build-isolation
 argparse
 ffmpeg
 ipython
