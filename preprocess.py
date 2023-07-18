@@ -259,8 +259,8 @@ def sample_train_data(dataset_A, dataset_B, n_frames = 128):
 
 #     plt.show()
 
-# def visualize_audio(audio,sampling_rate,text=''):
-#     print(text)
-#     IPython.display.display(ipd.Audio(audio, rate=sampling_rate, autoplay=False))            # plays audio
-#     plt.plot(audio, '-', )                                        # plot audio
-#     plt.show()
+def visualize_audio(audio,sampling_rate,text=''):
+    print(text)
+    IPython.display.display(ipd.Audio(audio, rate=sampling_rate, autoplay=False))            # plays audio
+    plt.plot(audio, '-', )                                        # plot audio
+    plt.show()
