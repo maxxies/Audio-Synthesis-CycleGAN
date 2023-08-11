@@ -1,6 +1,7 @@
 from params import *
 import os
-from module import discriminator, generator_gatedcnn
+from module import discriminator, generator_gatedcnn_with_autoencoder
+from module import create_autoencoder
 from utils import l1_loss, l2_loss
 from datetime import datetime
 import zipfile
@@ -14,7 +15,7 @@ v1.disable_v2_behavior()
 
 class CycleGAN(object):
 
-    def __init__(self, num_features, discriminator=discriminator, generator=generator_gatedcnn, mode='train'):
+    def __init__(self, num_features, discriminator=discriminator, generator=generator_gatedcnn_with_autoencoder, mode='train'):
 
         self.num_features = num_features
         # [batch_size, num_features, num_frames]
@@ -23,6 +24,7 @@ class CycleGAN(object):
         self.discriminator = discriminator
         self.generator = generator
         self.mode = mode
+        self.autoencoder = create_autoencoder(self.input_shape,128)
 
         self.build_model()
         self.optimizer_initializer()
@@ -58,21 +60,25 @@ class CycleGAN(object):
             tf.float32, shape=self.input_shape, name='input_A_test')
         self.input_B_test = v1.placeholder(
             tf.float32, shape=self.input_shape, name='input_B_test')
+        
+        # Define autoencoder
+        self.latent_dim = 128  # Adjust based on desired latent space size
+
 
         self.generation_B = self.generator(
-            inputs=self.input_A_real, reuse=False, scope_name='generator_A2B')
+            inputs=self.input_A_real,autoencoder=self.autoencoder, reuse=False, scope_name='generator_A2B')
         self.cycle_A = self.generator(
-            inputs=self.generation_B, reuse=False, scope_name='generator_B2A')
+            inputs=self.generation_B,autoencoder=self.autoencoder, reuse=False, scope_name='generator_B2A')
 
         self.generation_A = self.generator(
-            inputs=self.input_B_real, reuse=True, scope_name='generator_B2A')
+            inputs=self.input_B_real,autoencoder=self.autoencoder, reuse=True, scope_name='generator_B2A')
         self.cycle_B = self.generator(
-            inputs=self.generation_A, reuse=True, scope_name='generator_A2B')
+            inputs=self.generation_A,autoencoder=self.autoencoder, reuse=True, scope_name='generator_A2B')
 
         self.generation_A_identity = self.generator(
-            inputs=self.input_A_real, reuse=True, scope_name='generator_B2A')
+            inputs=self.input_A_real,autoencoder=self.autoencoder, reuse=True, scope_name='generator_B2A')
         self.generation_B_identity = self.generator(
-            inputs=self.input_B_real, reuse=True, scope_name='generator_A2B')
+            inputs=self.input_B_real,autoencoder=self.autoencoder, reuse=True, scope_name='generator_A2B')
 
         self.discrimination_A_fake = self.discriminator(
             inputs=self.generation_A, reuse=False, scope_name='discriminator_A')
@@ -142,9 +148,9 @@ class CycleGAN(object):
 
         # Reserved for test
         self.generation_B_test = self.generator(
-            inputs=self.input_A_test, reuse=True, scope_name='generator_A2B')
+            inputs=self.input_A_test,autoencoder=self.autoencoder, reuse=True, scope_name='generator_A2B')
         self.generation_A_test = self.generator(
-            inputs=self.input_B_test, reuse=True, scope_name='generator_B2A')
+            inputs=self.input_B_test,autoencoder=self.autoencoder, reuse=True, scope_name='generator_B2A')
 
     def optimizer_initializer(self):
 
@@ -190,28 +196,33 @@ class CycleGAN(object):
 
     
     def save(self, directory, filename):
-
         if not os.path.exists(directory):
             os.makedirs(directory)
-        self.saver.save(self.sess, os.path.join(directory, filename))
         
-        return os.path.join(directory, filename)
+        # Save CycleGAN model
+        self.saver.save(self.sess, os.path.join(directory, filename))
 
-    def load(self, filepath):
+        # Save Autoencoder model
+        autoencoder_filename = 'autoencoder_model.ckpt'
+        autoencoder_path = self.autoencoder.save_weights(os.path.join(directory, autoencoder_filename))
 
+        return os.path.join(directory, filename), autoencoder_path
+
+
+    def load(self, filepath, autoencoder_filepath):
         self.saver.restore(self.sess, filepath)
+        self.autoencoder.load_weights(autoencoder_filepath)
 
 
 
     def summary(self):
 
         with v1.name_scope('generator_summaries'):
-            cycle_loss_summary =v1.summary.scalar('cycle_loss', self.cycle_loss)
             identity_loss_summary =v1.summary.scalar('identity_loss', self.identity_loss)
             generator_loss_A2B_summary =v1.summary.scalar('generator_loss_A2B', self.generator_loss_A2B)
             generator_loss_B2A_summary =v1.summary.scalar('generator_loss_B2A', self.generator_loss_B2A)
             generator_loss_summary =v1.summary.scalar('generator_loss', self.generator_loss)
-            generator_summaries =v1.summary.merge([cycle_loss_summary, identity_loss_summary, generator_loss_A2B_summary, generator_loss_B2A_summary, generator_loss_summary])
+            generator_summaries =v1.summary.merge([ identity_loss_summary, generator_loss_A2B_summary, generator_loss_B2A_summary, generator_loss_summary])
 
         with v1.name_scope('discriminator_summaries'):
             discriminator_loss_A_summary =v1.summary.scalar('discriminator_loss_A', self.discriminator_loss_A)

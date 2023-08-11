@@ -1,5 +1,19 @@
 import tensorflow as tf
-from tensorflow.keras.layers import Conv1D, Conv2D,LayerNormalization, Multiply, Activation
+from tensorflow.keras.layers import Conv1D, Conv2D,LayerNormalization, Multiply, Activation, Input, LSTM, RepeatVector
+from tensorflow.keras.models import Model
+
+
+def create_autoencoder(input_shape, latent_dim):
+    input_audio = Input(shape=input_shape)
+    encoded = LSTM(latent_dim, activation='relu', return_sequences=True)(input_audio)  # Note return_sequences=True
+    decoded = LSTM(input_shape[1], activation='relu', return_sequences=True)(encoded)
+
+    autoencoder = Model(input_audio, decoded)
+    autoencoder.compile(optimizer='adam', loss='mse')  # Use suitable loss for audio data
+
+    return autoencoder
+
+
 
 def gated_linear_layer(inputs, gates, name=None):
     activation = Multiply()([inputs, Activation('sigmoid')(gates)])
@@ -80,10 +94,11 @@ def pixel_shuffler(inputs, shuffle_size=2, name=None):
 
     return outputs
 
-def generator_gatedcnn(inputs, reuse=False, scope_name='generator_gatedcnn'):
+def generator_gatedcnn_with_autoencoder(inputs,autoencoder,num_features=24, reuse=False, scope_name='generator_gatedcnn_with_autoencoder'):
     # inputs has shape [batch_size, num_features, time]
     # we need to convert it to [batch_size, time, num_features] for 1D convolution
     inputs = tf.transpose(inputs, perm=[0, 2, 1], name='input_transpose')
+
 
     with tf.compat.v1.variable_scope(scope_name, reuse=reuse) as scope:
         # Discriminator would be reused in CycleGAN
@@ -92,8 +107,13 @@ def generator_gatedcnn(inputs, reuse=False, scope_name='generator_gatedcnn'):
         else:
             assert scope.reuse is False
         
-        h1 = conv1d_layer(inputs=inputs, filters=128, kernel_size=15, strides=1, activation=None, name='h1_conv')
-        h1_gates = conv1d_layer(inputs=inputs, filters=128, kernel_size=15, strides=1, activation=None, name='h1_gates')
+        # Encode input audio using the autoencoder's encoder
+        encoded_audio = autoencoder.layers[1](inputs)  # Assuming first layer is LSTM
+        encoded_audio_repeated = RepeatVector(num_features)(encoded_audio)  # Repeat vector to match input shape
+
+        # GatedCNN layers
+        h1 = conv1d_layer(inputs=encoded_audio_repeated, filters=128, kernel_size=15, strides=1, activation=None, name='h1_conv')
+        h1_gates = conv1d_layer(inputs=encoded_audio_repeated, filters=128, kernel_size=15, strides=1, activation=None, name='h1_gates')
         h1_glu = gated_linear_layer(inputs=h1, gates=h1_gates, name='h1_glu')
 
         # Downsample
