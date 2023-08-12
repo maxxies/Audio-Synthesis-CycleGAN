@@ -24,7 +24,7 @@ class CycleGAN(object):
         self.discriminator = discriminator
         self.generator = generator
         self.mode = mode
-        self.autoencoder = create_autoencoder((None, None, num_features),128)
+        self.autoencoder = create_autoencoder(self.input_shape,128)
 
         self.build_model()
         self.optimizer_initializer()

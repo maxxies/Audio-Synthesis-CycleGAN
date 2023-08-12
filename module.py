@@ -4,12 +4,12 @@ from tensorflow.keras.models import Model
 
 
 def create_autoencoder(input_shape, latent_dim):
-    input_audio = Input(shape=input_shape)
-    encoded = LSTM(latent_dim, activation='relu', return_sequences=True)(input_audio)  # Note return_sequences=True
-    decoded = LSTM(input_shape[1], activation='relu', return_sequences=True)(encoded)
+    input_audio = Input(shape=(None, input_shape[2]))
+    encoded = LSTM(latent_dim, activation='relu', return_sequences=True)(input_audio)
+    decoded = LSTM(input_shape[2], activation='relu', return_sequences=True)(encoded)
 
     autoencoder = Model(input_audio, decoded)
-    autoencoder.compile(optimizer='adam', loss='mse')  # Use suitable loss for audio data
+    autoencoder.compile(optimizer='adam', loss='mse')
 
     return autoencoder
 
@@ -108,12 +108,11 @@ def generator_gatedcnn_with_autoencoder(inputs,autoencoder,num_features=24, reus
             assert scope.reuse is False
         
         # Encode input audio using the autoencoder's encoder
-        encoded_audio = autoencoder.layers[1](inputs)  # Assuming first layer is LSTM
-        encoded_audio_repeated = RepeatVector(num_features)(encoded_audio)  # Repeat vector to match input shape
+        encoded_audio = autoencoder(inputs)  # Assuming first layer is LSTM
 
         # GatedCNN layers
-        h1 = conv1d_layer(inputs=encoded_audio_repeated, filters=128, kernel_size=15, strides=1, activation=None, name='h1_conv')
-        h1_gates = conv1d_layer(inputs=encoded_audio_repeated, filters=128, kernel_size=15, strides=1, activation=None, name='h1_gates')
+        h1 = conv1d_layer(inputs=encoded_audio, filters=128, kernel_size=15, strides=1, activation=None, name='h1_conv')
+        h1_gates = conv1d_layer(inputs=encoded_audio, filters=128, kernel_size=15, strides=1, activation=None, name='h1_gates')
         h1_glu = gated_linear_layer(inputs=h1, gates=h1_gates, name='h1_glu')
 
         # Downsample
