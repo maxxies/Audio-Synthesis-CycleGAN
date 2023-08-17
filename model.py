@@ -1,7 +1,6 @@
 from params import *
 import os
 from module import discriminator, generator_gatedcnn
-from module import create_autoencoder
 from utils import l1_loss, l2_loss
 from datetime import datetime
 import zipfile
@@ -60,9 +59,6 @@ class CycleGAN(object):
         self.input_B_test = v1.placeholder(
             tf.float32, shape=self.input_shape, name='input_B_test')
         
-        # Define autoencoder
-        self.latent_dim = 128  # Adjust based on desired latent space size
-
 
         self.generation_B = self.generator(
             inputs=self.input_A_real, reuse=False, scope_name='generator_A2B')
