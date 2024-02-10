@@ -6,4 +6,3 @@ numpy
 soundfile
 tensorflow
 numpy
-time
