@@ -4,3 +4,6 @@ ffmpeg
 ipython
 numpy
 soundfile
+tensorflow
+numpy
+time

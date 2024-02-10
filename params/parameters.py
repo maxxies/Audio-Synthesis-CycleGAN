@@ -1,29 +1,31 @@
 #############################
 # Training Parameters
 #############################
-num_of_epochs = 100
+num_of_epochs = 600
 audio_sampling_rate = 16000
-
-#############################
-# Datsets Parameters
-#############################
-# train_A_dir = 'gs://audio_dataset_bucket/Audios/neutral'
-# train_B_dir = 'gs://audio_dataset_bucket/Audios/happy'
 
 #############################
 # Model Parameters
 #############################
 model_prefix = 'happy'
-model_dir =f"/home/jupyter/model/{model_prefix}"
+model_dir =f"/home/maxxies/Emodio/Models/{model_prefix}"
+
+
+#############################
+# Datsets Parameters
+#############################
+train_A_dir = '/home/maxxies/Emodio/Audios/neutral'
+train_B_dir = '/home/maxxies/Emodio/Audios/{model_prefix}'
+
 
 #############################
 # Training logs Parameters
 #############################
-train_logs__dir ='/home/jupyter/Train_Logs'
+train_logs__dir ='/home/maxxies/Emodio/Train_Logs'
 
 #############################
 # Output Parameters
 #############################
-norm_dir = '/home/jupyter/Normalizations'
-output_dir = '/home/jupyter/output'
-log_dir = '/home/jupyter/Tensorboard_Logs'
+norm_dir = '/home/maxxies/Emodio/Normalizations'
+output_dir = '/home/maxxies/Emodio/output'
+log_dir = '/home/maxxies/Emodio/Tensorboard_Logs'
