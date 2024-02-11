@@ -80,8 +80,8 @@ def train(coded_sps_A_norm, coded_sps_B_norm, random_seed):
     n_frames = 128
     lambda_cycle = 10
     lambda_identity = 5
-    generator_losses = []
-    discriminator_losses = []
+    # generator_losses = []
+    # discriminator_losses = []
 
     model = CycleGAN(num_features=num_mcep)
 
@@ -119,12 +119,12 @@ def train(coded_sps_A_norm, coded_sps_B_norm, random_seed):
 
             generator_loss, discriminator_loss = model.train(input_A=dataset_A[start:end], input_B=dataset_B[start:end], lambda_cycle=lambda_cycle,
                                                              lambda_identity=lambda_identity, generator_learning_rate=generator_learning_rate, discriminator_learning_rate=discriminator_learning_rate)
-            generator_losses.append(generator_loss)
-            discriminator_losses.append(discriminator_loss)
+            # generator_losses.append(generator_loss)
+            # discriminator_losses.append(discriminator_loss)
 
             if i % 1000 == 0:
                 # print('Iteration: %d, Generator Loss : %f, Discriminator Loss : %f' % (num_iterations, generator_loss, discriminator_loss))
-                print('Iteration: {:08d}, Generator Learning Rate: {:.7f}, Discriminator Learning Rate: {:.7f}, Generator Loss : {:.7f}, Discriminator Loss : {:.7f}'.format(
+                print('Iteration: {:15d}, Generator Learning Rate: {:.10f}, Discriminator Learning Rate: {:.10f}, Generator Loss : {:.10f}, Discriminator Loss : {:.10f}'.format(
                     num_iterations, generator_learning_rate, discriminator_learning_rate, generator_loss, discriminator_loss))
 
            
