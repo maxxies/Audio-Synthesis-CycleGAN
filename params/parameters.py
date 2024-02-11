@@ -15,7 +15,7 @@ model_dir =f"/home/maxxies/Emodio/Models/{model_prefix}"
 # Datsets Parameters
 #############################
 train_A_dir = '/home/maxxies/Emodio/Audios/neutral'
-train_B_dir = '/home/maxxies/Emodio/Audios/{model_prefix}'
+train_B_dir = f"/home/maxxies/Emodio/Audios/{model_prefix}"
 
 
 #############################
