@@ -8,6 +8,7 @@ import re
 import shutil
 import tensorflow as tf
 import tensorflow.compat.v1 as v1
+import wandb
 
 v1.disable_v2_behavior()
 
@@ -40,6 +41,13 @@ class CycleGAN(object):
                 os.makedirs(self.log_dir)
             self.writer = v1.summary.FileWriter(self.log_dir, v1.get_default_graph())
             self.generator_summaries, self.discriminator_summaries = self.summary()
+
+        wandb.init(
+                # set the wandb project where this run will be logged
+                project="emodio",
+                # Set the name of the run
+                name=f"{model_prefix}:{now.strftime('%d-%B-%Y-%I%p')}",
+            )
 
     def build_model(self):
 
@@ -165,11 +173,13 @@ class CycleGAN(object):
             feed_dict = {self.lambda_cycle: lambda_cycle, self.lambda_identity: lambda_identity, self.input_A_real: input_A, self.input_B_real: input_B, self.generator_learning_rate: generator_learning_rate})
 
         self.writer.add_summary(generator_summaries, self.train_step)
+        wandb.tensorflow.log(generator_summaries)
 
         discriminator_loss, _, discriminator_summaries = self.sess.run([self.discriminator_loss, self.discriminator_optimizer, self.discriminator_summaries], \
             feed_dict = {self.input_A_real: input_A, self.input_B_real: input_B, self.discriminator_learning_rate: discriminator_learning_rate, self.input_A_fake: generation_A, self.input_B_fake: generation_B})
 
         self.writer.add_summary(discriminator_summaries, self.train_step)
+        wandb.tensorflow.log(discriminator_summaries)
 
         # Increment the training step
         self.train_step += 1
