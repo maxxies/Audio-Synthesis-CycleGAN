@@ -173,13 +173,20 @@ class CycleGAN(object):
             feed_dict = {self.lambda_cycle: lambda_cycle, self.lambda_identity: lambda_identity, self.input_A_real: input_A, self.input_B_real: input_B, self.generator_learning_rate: generator_learning_rate})
 
         self.writer.add_summary(generator_summaries, self.train_step)
-        wandb.tensorflow.log(generator_summaries)
+
+        # log to wandb
+        
+        with self.sess:
+            wandb.tensorflow.log(tf.summary.merge_all())
 
         discriminator_loss, _, discriminator_summaries = self.sess.run([self.discriminator_loss, self.discriminator_optimizer, self.discriminator_summaries], \
             feed_dict = {self.input_A_real: input_A, self.input_B_real: input_B, self.discriminator_learning_rate: discriminator_learning_rate, self.input_A_fake: generation_A, self.input_B_fake: generation_B})
 
         self.writer.add_summary(discriminator_summaries, self.train_step)
-        wandb.tensorflow.log(discriminator_summaries)
+
+        # log to wandb
+        with self.sess:
+            wandb.tensorflow.log(tf.summary.merge_all())
 
         # Increment the training step
         self.train_step += 1

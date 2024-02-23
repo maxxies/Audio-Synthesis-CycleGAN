@@ -2,6 +2,7 @@ from params import *
 import os
 import numpy as np
 import time
+import wandb
 
 
 from preprocess import *
@@ -136,3 +137,4 @@ def train(coded_sps_A_norm, coded_sps_B_norm, random_seed):
 
     model_name = "{}.ckpt".format(model_prefix)
     model.save(directory=model_dir, filename=model_name)
+    wandb.finish()
