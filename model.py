@@ -1,6 +1,6 @@
 from params import *
 import os
-from module import discriminator, generator_gatedcnn
+from module import discriminator, generator_gatedcnn, generator_gatedcnn_attention
 from utils import l1_loss, l2_loss
 from datetime import datetime
 import zipfile
@@ -15,14 +15,18 @@ v1.disable_v2_behavior()
 
 class CycleGAN(object):
 
-    def __init__(self, num_features, discriminator=discriminator, generator=generator_gatedcnn, mode='train'):
+    def __init__(self, num_features, discriminator=discriminator, attention= False, mode='train'):
 
         self.num_features = num_features
         # [batch_size, num_features, num_frames]
         self.input_shape = [None, num_features, None]
+        self.attention = attention
 
         self.discriminator = discriminator
-        self.generator = generator
+        if self.attention:
+            self.generator = generator_gatedcnn_attention
+        else:
+            self.generator = generator_gatedcnn
         self.mode = mode
 
         self.build_model()

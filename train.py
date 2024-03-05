@@ -65,7 +65,7 @@ def prepare_data(train_A_dir, train_B_dir):
     return coded_sps_A_norm, coded_sps_B_norm
 
 
-def train(coded_sps_A_norm, coded_sps_B_norm, random_seed):
+def train(coded_sps_A_norm, coded_sps_B_norm,attention, random_seed):
 
     np.random.seed(random_seed)
 
@@ -84,7 +84,7 @@ def train(coded_sps_A_norm, coded_sps_B_norm, random_seed):
     # generator_losses = []
     # discriminator_losses = []
 
-    model = CycleGAN(num_features=num_mcep)
+    model = CycleGAN(num_features=num_mcep, attention=attention)
 
     for epoch in range(num_epochs):
         print('Epoch: %d/%d' % (epoch, num_epochs))
@@ -125,7 +125,7 @@ def train(coded_sps_A_norm, coded_sps_B_norm, random_seed):
 
             if i % 1000 == 0:
                 # print('Iteration: %d, Generator Loss : %f, Discriminator Loss : %f' % (num_iterations, generator_loss, discriminator_loss))
-                print('Iteration: {:15d}, Generator Learning Rate: {:.10f}, Discriminator Learning Rate: {:.10f}, Generator Loss : {:.10f}, Discriminator Loss : {:.10f}'.format(
+                print('Iteration: {:15f}, Generator Learning Rate: {:.10f}, Discriminator Learning Rate: {:.10f}, Generator Loss : {:.10f}, Discriminator Loss : {:.10f}'.format(
                     num_iterations, generator_learning_rate, discriminator_learning_rate, generator_loss, discriminator_loss))
 
            
