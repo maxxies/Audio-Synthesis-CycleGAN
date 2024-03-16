@@ -46,12 +46,12 @@ class CycleGAN(object):
             self.writer = v1.summary.FileWriter(self.log_dir, v1.get_default_graph())
             self.generator_summaries, self.discriminator_summaries = self.summary()
 
-        wandb.init(
-                # set the wandb project where this run will be logged
-                project="emodio",
-                # Set the name of the run
-                name=f"{model_prefix}:{now.strftime('%d-%B-%Y-%I%p')}",
-            )
+            wandb.init(
+                    # set the wandb project where this run will be logged
+                    project="emodio",
+                    # Set the name of the run
+                    name=f"{model_prefix}:{now.strftime('%d-%B-%Y-%I%p')}",
+                )
 
     def build_model(self):
 

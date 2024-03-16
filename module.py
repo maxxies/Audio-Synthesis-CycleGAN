@@ -158,9 +158,10 @@ def generator_gatedcnn(inputs, reuse=False, scope_name='generator_gatedcnn'):
         r3 = residual1d_block(inputs=r2, filters=1024, kernel_size=3, strides=1, name_prefix='residual1d_block3_')
         r4 = residual1d_block(inputs=r3, filters=1024, kernel_size=3, strides=1, name_prefix='residual1d_block4_')
         r5 = residual1d_block(inputs=r4, filters=1024, kernel_size=3, strides=1, name_prefix='residual1d_block5_')
+        r6 = residual1d_block(inputs=r5, filters=1024, kernel_size=3, strides=1, name_prefix='residual1d_block6_')
 
         # Upsample
-        u1 = upsample1d_block(inputs=r5, filters=1024, kernel_size=5, strides=2, name_prefix='upsample1d_block1_')
+        u1 = upsample1d_block(inputs=r6, filters=1024, kernel_size=5, strides=2, name_prefix='upsample1d_block1_')
         u2 = upsample1d_block(inputs=u1, filters=512, kernel_size=5, strides=2, name_prefix='upsample1d_block2_')
 
         # Output
@@ -169,7 +170,7 @@ def generator_gatedcnn(inputs, reuse=False, scope_name='generator_gatedcnn'):
 
     return o2
 
-def generator_gatedcnn_attention(inputs, reuse=False, scope_name='generator_gatedcnn-attention'):
+def generator_gatedcnn_attention(inputs, reuse=False, scope_name='generator_gatedcnn_attention'):
     # inputs has shape [batch_size, num_features, time]
     # we need to convert it to [batch_size, time, num_features] for 1D convolution
     inputs = tf.transpose(inputs, perm = [0, 2, 1], name = 'input_transpose')
@@ -195,9 +196,10 @@ def generator_gatedcnn_attention(inputs, reuse=False, scope_name='generator_gate
         r3 = residual1d_block_with_attention(inputs=r2, filters=1024, kernel_size=3, strides=1, name_prefix='residual1d_block_with_attention3_')
         r4 = residual1d_block_with_attention(inputs=r3, filters=1024, kernel_size=3, strides=1, name_prefix='residual1d_block_with_attention4_')
         r5 = residual1d_block_with_attention(inputs=r4, filters=1024, kernel_size=3, strides=1, name_prefix='residual1d_block_with_attention5_')
+        r6 = residual1d_block_with_attention(inputs=r5, filters=1024, kernel_size=3, strides=1, name_prefix='residual1d_block_with_attention6_')
 
         # Upsample
-        u1 = upsample1d_block(inputs=r5, filters=1024, kernel_size=5, strides=2, name_prefix='upsample1d_block1_')
+        u1 = upsample1d_block(inputs=r6, filters=1024, kernel_size=5, strides=2, name_prefix='upsample1d_block1_')
         u2 = upsample1d_block(inputs=u1, filters=512, kernel_size=5, strides=2, name_prefix='upsample1d_block2_')
 
         # Output
