@@ -3,6 +3,7 @@ import os
 import numpy as np
 import time
 import wandb
+import pickle
 
 
 from preprocess import *
@@ -61,6 +62,12 @@ def prepare_data(train_A_dir, train_B_dir):
 
     print('Time Elapsed for Data Preprocessing: %02d:%02d:%02d' % (
         time_elapsed // 3600, (time_elapsed % 3600 // 60), (time_elapsed % 60 // 1)))
+    
+    with open(os.path.join(output_dir, 'data_neutral.pickle'), 'rb') as f:
+        pickle.dump(coded_sps_A_norm, f)
+
+    with open(os.path.join(output_dir, f'data_{model_prefix}.pickle'), 'rb') as f:
+        pickle.dump(coded_sps_B_norm, f)
 
     return coded_sps_A_norm, coded_sps_B_norm
 
@@ -120,12 +127,13 @@ def train(coded_sps_A_norm, coded_sps_B_norm,attention, random_seed):
 
             generator_loss, discriminator_loss = model.train(input_A=dataset_A[start:end], input_B=dataset_B[start:end], lambda_cycle=lambda_cycle,
                                                              lambda_identity=lambda_identity, generator_learning_rate=generator_learning_rate, discriminator_learning_rate=discriminator_learning_rate)
-            # generator_losses.append(generator_loss)
-            # discriminator_losses.append(discriminator_loss)
+            
+            # log the losses
+            wandb.log({'generator_loss': generator_loss, 'discriminator_loss': discriminator_loss})
 
             if i % 1000 == 0:
                 # print('Iteration: %d, Generator Loss : %f, Discriminator Loss : %f' % (num_iterations, generator_loss, discriminator_loss))
-                print('Iteration: {:15f}, Generator Learning Rate: {:.10f}, Discriminator Learning Rate: {:.10f}, Generator Loss : {:.10f}, Discriminator Loss : {:.10f}'.format(
+                print('Iteration: {:15d}, Generator Learning Rate: {:.10f}, Discriminator Learning Rate: {:.10f}, Generator Loss : {:.10f}, Discriminator Loss : {:.10f}'.format(
                     num_iterations, generator_learning_rate, discriminator_learning_rate, generator_loss, discriminator_loss))
 
            
